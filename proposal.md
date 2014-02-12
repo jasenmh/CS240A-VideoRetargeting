@@ -13,9 +13,10 @@ CS290I course. In this project, we endeavored to rescale videos using seam-carvi
 
 The project that was implemented for the CS290I course was a sequential version of this algorithm written in C++, [which can be found here](https://github.com/jasenmh/290I-VideoRetargeting/tree/master/opencv). This version uses [OpenCV](http://opencv.org/) for gathering and manipulating the image data in video formats. It also has two heuristics for selecting cuts of frames over time. One heuristic looks at 2 consecutive frames together, and the other looks at 4 frames together. 
 
-## Parallelization Goal
+## Parallelization
 
-The current implementation that we are going to build off of runs fairly slow. We hope to improve it's performance by parallelizing the seam-carving algorithm for video retargeting. Since the seam-carving for each frame is only dependent on a couple other frames, the total set of frames in a video can be easily split up for computation. One simple solution could be to divide frame segments among a number of processors, and then combine all the results. Since this is an embarassingly parallel computation, we want to also try some other methods of parallelization
+The current implementation that we are going to build off of runs fairly slow. We hope to improve it's performance by parallelizing the seam-carving algorithm for video retargeting. Since the seam-carving for each frame is only dependent on a couple other frames, the total set of frames in a video can be easily split up for computation. One simple solution could be to divide frame segments among a number of processors, and then combine all the results. Since this is an embarassingly parallel computation, we want to also try some other methods of parallelization. For example, to attempt to improve the image stabilization for video retargeting, we will try dividing up each frame in order to determine which pixels to eliminate. If we have four processors, we could split the image up into four quadrants, and then each processor would have to select the least disruptive change for its quadrant. To combine the results in this manner would require some communication and coordination for determining which are the "best" pixels to remove from the entire frame. 
+We hope to implement the simple parallel optimization, as well as one or more advanced parallel optimizations, and then compare the performance results of these methods. 
 
 ## References
 
