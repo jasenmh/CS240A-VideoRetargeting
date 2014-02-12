@@ -11,7 +11,8 @@ CS290I course. In this project, we endeavored to rescale videos using seam-carvi
 
 ![](http://i.imgur.com/L6JN6yA.png)
 
-The version of this algorithm that was implemented for the CS290I course was a sequential version of this algorithm written in C++, [which can be found here](https://github.com/jasenmh/290I-VideoRetargeting/tree/master/opencv). This version uses [OpenCV](http://opencv.org/) for gathering and manipulating the image data in video formats.  
+The project that was implemented for the CS290I course was a sequential version of this algorithm written in C++, [which can be found here](https://github.com/jasenmh/290I-VideoRetargeting/tree/master/opencv). This version uses [OpenCV](http://opencv.org/) for gathering and manipulating the image data in video formats. It also has two heuristics for selecting cuts of frames over time. One heuristic looks at 2 consecutive frames together, and the other looks at 4 frames together. 
+
 
 ## References
 
