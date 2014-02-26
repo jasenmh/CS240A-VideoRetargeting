@@ -24,11 +24,11 @@ OBJ = $(addsuffix .o, $(basename $(SRC)))
 
 # "make" makes the executable.
 $(EXEC): $(OBJ)
-	gcc $(LFLAGS) $(OBJ) -o $(EXEC)
+	g++ $(LFLAGS) $(OBJ) -o $(EXEC)
 
 # This says how to build an object (.o) file from a source (.c) file
-%.o : %.c
-	gcc $(CFLAGS) -c $< -o $@
+%.o : %.cpp
+	g++ $(CFLAGS) -c $< -o $@
 
 # "make clean" deletes objects and executable
 clean:
