@@ -1,4 +1,5 @@
 # Makefile for CS 140 homework 1
+CC = /usr/bin/gcc
 
 # This is a list of the source (.c) files you use
 SRC = main.cpp graph.cpp
@@ -24,11 +25,11 @@ OBJ = $(addsuffix .o, $(basename $(SRC)))
 
 # "make" makes the executable.
 $(EXEC): $(OBJ)
-	gcc $(LFLAGS) $(OBJ) -o $(EXEC)
+	$(CC) $(LFLAGS) $(OBJ) -o $(EXEC)
 
 # This says how to build an object (.o) file from a source (.c) file
-%.o : %.c
-	gcc $(CFLAGS) -c $< -o $@
+%.o : %.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # "make clean" deletes objects and executable
 clean:
