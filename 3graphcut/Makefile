@@ -9,12 +9,12 @@ EXEC = GraphCut
 # This ives the compiler flags. Uncomment one of the following two lines.
 # This one is for performance: use max optimization, skip assertions.
 #CFLAGS = -Wall -m64 -DBUILD_64 -O3 -DNDEBUG
-#CFLAGS = `pkg-config --cflags opencv`
-CFLAGS = -I/opt/apps/intel13/opencv/2.4.6.1/include
+CFLAGS = `pkg-config --cflags opencv`
+#CFLAGS = -I/opt/apps/intel13/opencv/2.4.6.1/include
 # This one is for debugging: generate symbols and check assertions.
 # CFLAGS = -Wall -m64 -DBUILD_64 -g -O0 -DDEBUG
-#LFLAGS = `pkg-config --libs opencv`
-LFLAGS = -L/opt/apps/intel13/opencv/2.4.6.1/lib
+LFLAGS = `pkg-config --libs opencv`
+#LFLAGS = -L/opt/apps/intel13/opencv/2.4.6.1/lib
  
 
 
