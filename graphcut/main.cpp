@@ -14,10 +14,12 @@
 
 using namespace std;
 using namespace cv;
+
 Mat RemoveSeam(Mat image, int Seam[] );
 int *FindSeam(Mat &GrayImage);
 Mat ReduceVer(Mat GrayImage, Mat image);
 Mat ReduceHor(Mat GrayImage, Mat image);
+
 Mat RemoveSeam(Mat image, int Seam[])
 {
     int nrows = image.rows;
@@ -46,6 +48,7 @@ Mat RemoveSeam(Mat image, int Seam[])
     }
     return ReducedImage;
 }
+
 int *FindSeam(Mat &grayImage)
 {
     typedef Graph<int,int,int> GraphType;
@@ -146,6 +149,7 @@ int *FindSeam(Mat &grayImage)
     delete g;
     return Seam;
 }
+
 Mat ReduceVer(Mat GrayImage, Mat image)
 {
     int rows = GrayImage.rows;
@@ -154,6 +158,7 @@ Mat ReduceVer(Mat GrayImage, Mat image)
     Mat ReturnImage = RemoveSeam(image, Seam);
     return ReturnImage;
 }
+
 Mat ReduceHor(Mat GrayImage, Mat image)
 {
     int rows = GrayImage.rows;
@@ -162,6 +167,7 @@ Mat ReduceHor(Mat GrayImage, Mat image)
     Mat ReturnImage = RemoveSeam(image, Seam);
     return ReturnImage.t();
 }
+
 Mat ReduceFrame(Mat frame1, Mat frame2, int ver, int hor)
 {
     Mat image = frame1;
