@@ -1,0 +1,38 @@
+# Makefile for CS 140 homework 1
+#CC = icpc
+CC = /opt/cilkplus-gcc/bin/g++
+# This is a list of the source (.c) files you use
+SRC = main.cpp graph.cpp maxflow.cpp
+
+# This is the name of the executable file you will run; here, ./matrix_multiply
+EXEC = GraphCut
+
+# This ives the compiler flags. Uncomment one of the following two lines.
+# This one is for performance: use max optimization, skip assertions.
+#CFLAGS = -Wall -m64 -DBUILD_64 -O3 -DNDEBUG
+CFLAGS = `pkg-config --cflags opencv`
+#CFLAGS = -I/opt/apps/intel13/opencv/2.4.6.1/include
+# This one is for debugging: generate symbols and check assertions.
+# CFLAGS = -Wall -m64 -DBUILD_64 -g -O0 -DDEBUG
+LFLAGS = `pkg-config --libs opencv`
+#LFLAGS = -L/opt/apps/intel13/opencv/2.4.6.1/lib
+ 
+
+
+
+# YOU PROBABLY DO NOT HAVE TO CHANGE ANYTHING BELOW THIS LINE.
+ 
+# This generates a list of object file names from the source file names
+OBJ = $(addsuffix .o, $(basename $(SRC)))
+
+# "make" makes the executable.
+$(EXEC): $(OBJ)
+	$(CC) $(LFLAGS) $(OBJ) -o $(EXEC)
+
+# This says how to build an object (.o) file from a source (.c) file
+%.o : %.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# "make clean" deletes objects and executable
+clean:
+	rm -f $(EXEC) *.o 
