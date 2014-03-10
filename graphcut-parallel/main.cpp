@@ -282,7 +282,7 @@ int main(int argc, char* argv[])
     }
 
     cap.open(inFile);
-    int maxFrame= cap.get(CV_CAP_PROP_FRAME_COUNT);
+    int maxFrames= cap.get(CV_CAP_PROP_FRAME_COUNT);
     int origWid = cap.get(CV_CAP_PROP_FRAME_WIDTH);
     int origHei = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
 
@@ -292,8 +292,8 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    Mat *frames = new Mat[maxFrame];
-    Mat *outFrames = new Mat[maxFrame];
+    Mat *frames = new Mat[maxFrames];
+    Mat *outFrames = new Mat[maxFrames];
     Mat empty;
 
     int ex = static_cast<int>(cap.get(CV_CAP_PROP_FOURCC));
@@ -312,7 +312,7 @@ int main(int argc, char* argv[])
         cout << "Reading in frames" << endl;
     
     // read in all video frames
-    for(int i = 0; i < maxFrame; ++i)
+    for(int i = 0; i < maxFrames; ++i)
     {
         cap >> frames[i];
         if(frames[i].empty())
@@ -323,19 +323,19 @@ int main(int argc, char* argv[])
     }
 
     if(quietMode == false)
-        cout << "Processing " << maxFrame << " frames..." << endl;
+        cout << "Processing " << maxFrames << " frames..." << endl;
 
     //int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
-    cilk_for(int i = 0; i < maxFrame; ++i)
+    cilk_for(int i = 0; i < maxFrames; ++i)
     {
         if(!quietMode)
-            cout << "Frame " << frameCount++ << "/" << maxFrame << endl;
+            cout << "Frame " << frameCount++ << "/" << maxFrames << endl;
 
         frame1 = frames[i];
         outFrames[i] = ReduceFrame(frame1, empty, ver, hor);
     }
 
-    for(int i = 0; i < maxFrame; ++i)
+    for(int i = 0; i < maxFrames; ++i)
     {
         output << outFrames[i];
     }
@@ -343,7 +343,7 @@ int main(int argc, char* argv[])
     if(reportMode == true)
     {
         cout << "Input file: " << inFile << "\tOutput file: " << outFile << endl;
-        cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrame << endl;
+        cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrames << endl;
         cout << "Seams carved: " << ver << "x" << hor << endl;
         cout << "Elapsed time: " << (clock() - startTime)/CLOCKS_PER_SEC << endl;
     }
