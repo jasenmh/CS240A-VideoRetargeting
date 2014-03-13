@@ -1,5 +1,6 @@
 # Makefile for CS 140 homework 1
-CC = icpc
+#CC = icpc
+CC = /opt/cilkplus-gcc/bin/g++
 # This is a list of the source (.c) files you use
 SRC = main.cpp graph.cpp maxflow.cpp
 

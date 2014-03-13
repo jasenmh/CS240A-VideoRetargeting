@@ -306,8 +306,6 @@ int main(int argc, char* argv[])
     const string outFile = inFile.substr(0, pAt) + "-basic.mov";
     output.open(outFile, ex, cap.get(CV_CAP_PROP_FPS), S, true);
 
-    clock_t startTime = clock();
-
     if(quietMode == false)
         cout << "Reading in frames" << endl;
     
@@ -325,6 +323,8 @@ int main(int argc, char* argv[])
     if(quietMode == false)
         cout << "Processing " << maxFrames << " frames..." << endl;
 
+    clock_t startTime = clock();
+
     //int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
     cilk_for(int i = 0; i < maxFrames; ++i)
     {
@@ -334,6 +334,8 @@ int main(int argc, char* argv[])
         frame1 = frames[i];
         outFrames[i] = ReduceFrame(frame1, empty, ver, hor);
     }
+
+    clock_t endTime = clock();
 
     for(int i = 0; i < maxFrames; ++i)
     {
@@ -345,7 +347,7 @@ int main(int argc, char* argv[])
         cout << "Input file: " << inFile << "\tOutput file: " << outFile << endl;
         cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrames << endl;
         cout << "Seams carved: " << ver << "x" << hor << endl;
-        cout << "Elapsed time: " << (clock() - startTime)/CLOCKS_PER_SEC << endl;
+        cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
     }
 
     return 0;

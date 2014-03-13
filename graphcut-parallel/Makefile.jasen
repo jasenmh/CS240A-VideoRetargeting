@@ -1,5 +1,6 @@
 # Makefile for CS 140 homework 1
-CC = icpc
+#CC = icpc
+CC = /opt/cilkplus-gcc/bin/g++
 # This is a list of the source (.c) files you use
 SRC = main.cpp graph.cpp maxflow.cpp
 
@@ -9,11 +10,11 @@ EXEC = GraphCut
 # This ives the compiler flags. Uncomment one of the following two lines.
 # This one is for performance: use max optimization, skip assertions.
 #CFLAGS = -Wall -m64 -DBUILD_64 -O3 -DNDEBUG
-CFLAGS = `pkg-config --cflags opencv`
+CFLAGS = `pkg-config --cflags opencv` -fcilkplus
 #CFLAGS = -I/opt/apps/intel13/opencv/2.4.6.1/include
 # This one is for debugging: generate symbols and check assertions.
 # CFLAGS = -Wall -m64 -DBUILD_64 -g -O0 -DDEBUG
-LFLAGS = `pkg-config --libs opencv`
+LFLAGS = `pkg-config --libs opencv` -lcilkrts
 #LFLAGS = -L/opt/apps/intel13/opencv/2.4.6.1/lib
  
 

@@ -282,7 +282,7 @@ int main(int argc, char* argv[])
     }
 
     cap.open(inFile);
-    int maxFrame = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    int maxFrames = cap.get(CV_CAP_PROP_FRAME_COUNT);
     int origWid = cap.get(CV_CAP_PROP_FRAME_WIDTH);
     int origHei = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
 
@@ -291,6 +291,11 @@ int main(int argc, char* argv[])
         printf("!!! cvCaptureFromAVI failed (file not found?)\n");
         return -1;
     }
+
+    Mat *frames = new Mat[maxFrames];
+    Mat *outFrames = new Mat[maxFrames];
+    Mat empty;
+
     int ex = static_cast<int>(cap.get(CV_CAP_PROP_FOURCC));
     Size S = Size((int)cap.get(CV_CAP_PROP_FRAME_WIDTH) -ver , (int)cap.get(CV_CAP_PROP_FRAME_HEIGHT)-hor);
     //char key = 0;
@@ -301,55 +306,49 @@ int main(int argc, char* argv[])
     const string outFile = inFile.substr(0, pAt) + "-basic.mov";
     output.open(outFile, ex, cap.get(CV_CAP_PROP_FPS), S, true);
 
-    clock_t startTime = clock();
 
     if(quietMode == false)
-        cout << "Processing " << maxFrame << " frames..." << endl;
+      cout << "Reading in frames" << endl;
+
+    // read in all video frames
+    for(int i = 0; i < maxFrames; ++i)
+    {
+      cap >> frames[i];
+      if(frames[i].empty())
+      {
+        cout << "Error: frame " << i << " empty" << endl;
+        exit(1);
+      }
+    }
+
+    if(quietMode == false)
+        cout << "Processing " << maxFrames << " frames..." << endl;
+
+    clock_t startTime = clock();
 
     //int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
-    while (/*key != 'q' && */ !last)
+    for(int i = 0; i < maxFrames; ++i)
     {
-        if(first ==1 )
-        {
-            cap >> frame1;
-            if (frame1.empty())
-            {
-                printf("!!! cvQueryFrame failed: no frame\n");
-                break;
-            }
-            first = 0;
-            continue;
-        }
-        else
-        {
-            cap >> frame2;
-            if(frame2.empty())
-            {
-                /* Graph cut on frame 1 */
-                //cout<< "Last frame" << endl;
-                frame2 = frame1;
-                last = 1;
-            }
-            NewFrame = ReduceFrame(frame1, frame2, ver, hor);
-            frame1 = frame2;
-        }
-        if(quietMode == false)
-            cout << "Frame " << frameCount++ << "/" << maxFrame << endl;
+      if(!quietMode)
+        cout << "Frame " << frameCount++ << "/" << maxFrames << endl;
 
-        if(displayMode == true)
-            imshow("Frames", NewFrame);
+      frame1 = frames[i];
+      outFrames[i] = ReduceFrame(frame1, empty, ver, hor);
+    }
 
-        // quit when user press 'q'
-        output<<NewFrame;
-        //key = cvWaitKey(1000 / 25);
+    clock_t endTime = clock();
+
+    for(int i = 0; i < maxFrames; ++i)
+    {
+      output << outFrames[i];
     }
 
     if(reportMode == true)
     {
         cout << "Input file: " << inFile << "\tOutput file: " << outFile << endl;
-        cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrame << endl;
+        cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrames << endl;
         cout << "Seams carved: " << ver << "x" << hor << endl;
-        cout << "Elapsed time: " << (clock() - startTime)/CLOCKS_PER_SEC << endl;
+        cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
     }
 
     return 0;
