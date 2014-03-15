@@ -422,6 +422,8 @@ int main(int argc, char* argv[])
     if(quietMode == false)
         cout << "Processing " << maxFrames << " frames..." << endl;
 
+// TODO - refactor to read in frames into array before processing
+// TODO - change timing system so we don't count I/O
     // This is the main loop which computes the retargeted frames
     while (/*key != 'q' &&*/ last<3 )
     {

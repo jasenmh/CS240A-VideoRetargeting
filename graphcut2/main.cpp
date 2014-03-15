@@ -407,6 +407,7 @@ int main(int argc, char* argv[])
     if(quietMode == false)
         cout << "Processing " << maxFrames << " frames..." << endl;
 
+    // TODO - change timing system so we don't count I/O
     // This is the main loop which computes the retargeted frames
     for(int i = 0; i < maxFrames; ++i)
     {
