@@ -234,6 +234,18 @@ Mat ReduceHor(Mat &GrayImage1, Mat &GrayImage2, Mat &GrayImage3, Mat &GrayImage4
     GrayImage4 = GrayImage4temp.t();
     return ReturnImage.t();
 }
+
+/* This function produces a new, retargeted image by iteratively 
+ * carving out the minimum seams. This version uses 3 future frames
+ * to compute the graph cut using forward energy.
+ *
+ * frame1: the current image from which we are removing seams
+ * frame2: the second frame in the sequence
+ * frame3: the third frame in the sequence
+ * frame4: the fourth frame in the sequence
+ * ver: the number of vertical seams to remove
+ * hor: the number of horizontal frames to remove
+ */
 Mat ReduceFrame(Mat frame1, Mat frame2, Mat frame3, Mat frame4,int ver, int hor)
 {
     //Mat image = frame1;
@@ -379,7 +391,7 @@ int main(int argc, char* argv[])
     if(quietMode == false)
         cout << "Processing " << maxFrames << " frames..." << endl;
 
-    //int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+    // This is the main loop which computes the retargeted frames
     while (/*key != 'q' &&*/ last<3 )
     {
         if(first ==1 )

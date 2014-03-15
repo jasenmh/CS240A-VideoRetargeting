@@ -168,6 +168,13 @@ Mat ReduceHor(Mat GrayImage, Mat image)
     return ReturnImage.t();
 }
 
+/* This function produces a new, retargeted image by iteratively 
+ * carving out the minimum seams. 
+ *
+ * frame1: the input image
+ * ver: the number of vertical seams to remove
+ * hor: the number of horizontal frames to remove
+ */
 Mat ReduceFrame(Mat frame1, int ver, int hor)
 {
     Mat image = frame1;
@@ -349,6 +356,7 @@ int main(int argc, char* argv[])
     if(quietMode == false)
         cout << "Processing " << maxFrames << " frames (" << maxSegments << " segments)" << endl;
 
+    // This is the main loop which computes the retargeted frames
     cilk_for(int i = 0; i < maxSegments; ++i)
     {
         if(!quietMode)
