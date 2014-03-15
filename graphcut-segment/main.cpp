@@ -20,14 +20,18 @@ int *FindSeam(Mat &GrayImage);
 Mat ReduceVer(Mat GrayImage, Mat image);
 Mat ReduceHor(Mat GrayImage, Mat image);
 
+/* Removes a seam from an image by copying all the pixels into a new image,
+ * except for ones found in the seam array.
+ * 
+ * image: the original version of the image
+ * seam: an array of integers which represent the column number of the pixel to remove from each row
+ */
 Mat RemoveSeam(Mat image, int Seam[])
 {
     int nrows = image.rows;
     int ncols = image.cols;
     Mat ReducedImage(nrows,ncols-1,CV_8UC3);
-    //ReducedGrayImage.copyTo(temp);
-    //for(int k = 0;k<3;k++)
-    //vector<Mat> channels = cv::split()
+
     for(int i=0; i<nrows; i++)
     {
         if(Seam[i] != 0)
@@ -49,6 +53,14 @@ Mat RemoveSeam(Mat image, int Seam[])
     return ReducedImage;
 }
 
+/* Performs the graph cut algorithm to find the minimum-energy seam in the image. See
+ * graph.cpp, graph.h, and maxflow.cpp for details. 
+ *  
+ * Returns an array of ints, with each index containing the column number of the pixel
+ * to remove from each row.
+ * 
+ * grayImage: the grayscale version of the image from which to find the seam
+ */
 int *FindSeam(Mat &grayImage)
 {
     typedef Graph<int,int,int> GraphType;
