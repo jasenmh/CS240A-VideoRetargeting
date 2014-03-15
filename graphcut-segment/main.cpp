@@ -150,6 +150,11 @@ int *FindSeam(Mat &grayImage)
     return Seam;
 }
 
+/* Removes one vertical seam from an image 
+ * 
+ * GrayImage: the greyscale version of the image
+ * image: the normal version of the image, before reduction
+ */
 Mat ReduceVer(Mat GrayImage, Mat image)
 {
     int rows = GrayImage.rows;
@@ -159,6 +164,11 @@ Mat ReduceVer(Mat GrayImage, Mat image)
     return ReturnImage;
 }
 
+/* Removes one horizontal seam from an image 
+ * 
+ * GrayImage: the greyscale version of the image
+ * image: the normal version of the image, before reduction
+ */
 Mat ReduceHor(Mat GrayImage, Mat image)
 {
     int rows = GrayImage.rows;
@@ -217,6 +227,8 @@ Mat ReduceFrame(Mat frame1, int ver, int hor)
     }
     else
     {
+        // For CS240 this is the only loop that will be called since we are only
+        // cutting vertical seams
         for(int i = 0; i < diffHorVer; ++i)
         {
             ReducedImage = ReduceVer(ReducedGrayImage, ReducedImage);
