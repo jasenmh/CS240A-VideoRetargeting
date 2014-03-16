@@ -32,6 +32,7 @@ Mat RemoveSeam(Mat image, int Seam[])
     int ncols = image.cols;
     Mat ReducedImage(nrows,ncols-1,CV_8UC3);
 
+    for(int i=0; i<nrows; i++)
     {
         if(Seam[i] != 0)
             image.row(i).colRange(Range(0,Seam[i])).copyTo(ReducedImage.row(i).colRange(Range(0,Seam[i])));
