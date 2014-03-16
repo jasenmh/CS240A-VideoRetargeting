@@ -20,15 +20,18 @@ int *FindSeam(Mat &GrayImage);
 Mat ReduceVer(Mat GrayImage, Mat image);
 Mat ReduceHor(Mat GrayImage, Mat image);
 
+/* Removes a seam from an image by copying all the pixels into a new image,
+ * except for ones found in the seam array.
+ * 
+ * image: the original version of the image
+ * seam: an array of integers which represent the column number of the pixel to remove from each row
+ */
 Mat RemoveSeam(Mat image, int Seam[])
 {
     int nrows = image.rows;
     int ncols = image.cols;
     Mat ReducedImage(nrows,ncols-1,CV_8UC3);
-    //ReducedGrayImage.copyTo(temp);
-    //for(int k = 0;k<3;k++)
-    //vector<Mat> channels = cv::split()
-    for(int i=0; i<nrows; i++)
+
     {
         if(Seam[i] != 0)
             image.row(i).colRange(Range(0,Seam[i])).copyTo(ReducedImage.row(i).colRange(Range(0,Seam[i])));
@@ -49,6 +52,14 @@ Mat RemoveSeam(Mat image, int Seam[])
     return ReducedImage;
 }
 
+/* Performs the graph cut algorithm to find the minimum-energy seam in the image. See
+ * graph.cpp, graph.h, and maxflow.cpp for details. 
+ *  
+ * Returns an array of ints, with each index containing the column number of the pixel
+ * to remove from each row.
+ * 
+ * grayImage: the grayscale version of the image from which to find the seam
+ */
 int *FindSeam(Mat &grayImage)
 {
     typedef Graph<int,int,int> GraphType;
@@ -150,6 +161,11 @@ int *FindSeam(Mat &grayImage)
     return Seam;
 }
 
+/* Removes one vertical seam from an image 
+ * 
+ * GrayImage: the greyscale version of the image
+ * image: the normal version of the image, before reduction
+ */
 Mat ReduceVer(Mat GrayImage, Mat image)
 {
     int rows = GrayImage.rows;
@@ -159,6 +175,11 @@ Mat ReduceVer(Mat GrayImage, Mat image)
     return ReturnImage;
 }
 
+/* Removes one horizontal seam from an image 
+ * 
+ * GrayImage: the greyscale version of the image
+ * image: the normal version of the image, before reduction
+ */
 Mat ReduceHor(Mat GrayImage, Mat image)
 {
     int rows = GrayImage.rows;
@@ -168,6 +189,14 @@ Mat ReduceHor(Mat GrayImage, Mat image)
     return ReturnImage.t();
 }
 
+/* This function produces a new, retargeted image by iteratively 
+ * carving out the minimum seams.
+ *
+ * frame1: the input image
+ * frame2: empty--not used in this version of the code
+ * ver: the number of vertical seams to remove
+ * hor: the number of horizontal frames to remove
+ */
 Mat ReduceFrame(Mat frame1, Mat frame2, int ver, int hor)
 {
     Mat image = frame1;
@@ -210,6 +239,8 @@ Mat ReduceFrame(Mat frame1, Mat frame2, int ver, int hor)
     }
     else
     {
+        // For CS240 this is the only loop that will be called since we are only
+        // cutting vertical seams
         for(int i = 0; i < diffHorVer; ++i)
         {
             ReducedImage = ReduceVer(ReducedGrayImage, ReducedImage);
@@ -282,7 +313,7 @@ int main(int argc, char* argv[])
     }
 
     cap.open(inFile);
-    int maxFrame = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    int maxFrames = cap.get(CV_CAP_PROP_FRAME_COUNT);
     int origWid = cap.get(CV_CAP_PROP_FRAME_WIDTH);
     int origHei = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
 
@@ -291,6 +322,11 @@ int main(int argc, char* argv[])
         printf("!!! cvCaptureFromAVI failed (file not found?)\n");
         return -1;
     }
+
+    Mat *frames = new Mat[maxFrames];
+    Mat *outFrames = new Mat[maxFrames];
+    Mat empty;
+
     int ex = static_cast<int>(cap.get(CV_CAP_PROP_FOURCC));
     Size S = Size((int)cap.get(CV_CAP_PROP_FRAME_WIDTH) -ver , (int)cap.get(CV_CAP_PROP_FRAME_HEIGHT)-hor);
     //char key = 0;
@@ -301,55 +337,49 @@ int main(int argc, char* argv[])
     const string outFile = inFile.substr(0, pAt) + "-basic.mov";
     output.open(outFile, ex, cap.get(CV_CAP_PROP_FPS), S, true);
 
-    clock_t startTime = clock();
 
     if(quietMode == false)
-        cout << "Processing " << maxFrame << " frames..." << endl;
+      cout << "Reading in frames" << endl;
 
-    //int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
-    while (/*key != 'q' && */ !last)
+    // read in all video frames
+    for(int i = 0; i < maxFrames; ++i)
     {
-        if(first ==1 )
-        {
-            cap >> frame1;
-            if (frame1.empty())
-            {
-                printf("!!! cvQueryFrame failed: no frame\n");
-                break;
-            }
-            first = 0;
-            continue;
-        }
-        else
-        {
-            cap >> frame2;
-            if(frame2.empty())
-            {
-                /* Graph cut on frame 1 */
-                //cout<< "Last frame" << endl;
-                frame2 = frame1;
-                last = 1;
-            }
-            NewFrame = ReduceFrame(frame1, frame2, ver, hor);
-            frame1 = frame2;
-        }
-        if(quietMode == false)
-            cout << "Frame " << frameCount++ << "/" << maxFrame << endl;
+      cap >> frames[i];
+      if(frames[i].empty())
+      {
+        cout << "Error: frame " << i << " empty" << endl;
+        exit(1);
+      }
+    }
 
-        if(displayMode == true)
-            imshow("Frames", NewFrame);
+    if(quietMode == false)
+        cout << "Processing " << maxFrames << " frames..." << endl;
 
-        // quit when user press 'q'
-        output<<NewFrame;
-        //key = cvWaitKey(1000 / 25);
+    clock_t startTime = clock();
+
+    // This is the main loop which computes the retargeted frames
+    for(int i = 0; i < maxFrames; ++i)
+    {
+      if(!quietMode)
+        cout << "Frame " << frameCount++ << "/" << maxFrames << endl;
+
+      frame1 = frames[i];
+      outFrames[i] = ReduceFrame(frame1, empty, ver, hor);
+    }
+
+    clock_t endTime = clock();
+
+    for(int i = 0; i < maxFrames; ++i)
+    {
+      output << outFrames[i];
     }
 
     if(reportMode == true)
     {
         cout << "Input file: " << inFile << "\tOutput file: " << outFile << endl;
-        cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrame << endl;
+        cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrames << endl;
         cout << "Seams carved: " << ver << "x" << hor << endl;
-        cout << "Elapsed time: " << (clock() - startTime)/CLOCKS_PER_SEC << endl;
+        cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
     }
 
     return 0;

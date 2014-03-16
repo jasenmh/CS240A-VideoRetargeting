@@ -2,3 +2,6 @@ data/
 GraphCut
 *.o
 *.mov
+*.txt
+*.swp
+*.out
