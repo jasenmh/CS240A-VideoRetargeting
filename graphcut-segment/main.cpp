@@ -299,7 +299,6 @@ int main(int argc, char* argv[])
 
     Mat *frames = new Mat[maxFrames * segments];
     Mat *carvedFrames = new Mat[maxFrames * segments];
-    Mat *outFrames = new Mat[maxFrames];
     Mat tmpFrame;
 
     int ex = static_cast<int>(cap.get(CV_CAP_PROP_FOURCC));
@@ -315,8 +314,6 @@ int main(int argc, char* argv[])
     int lastWidth = origWid - (lastSegment * segmentWidth);
     int seamsPerSegment = ver / segments;  // for now, require ver = i * segments
 
-    clock_t startTime = clock();
-
     if(quietMode == false)
         cout << "Reading in frames" << endl;
     
@@ -324,6 +321,12 @@ int main(int argc, char* argv[])
     for(int i = 0; i < maxFrames; ++i)
     {
         cap >> tmpFrame;
+        if(tmpFrame.empty())
+        {
+            cout << "Error: tmpFrame empty" << endl;
+            return -1;
+        }
+
         for(int j = 0; j < segments; ++j)
         {
             Rect r;
@@ -335,9 +338,25 @@ int main(int argc, char* argv[])
             {
                 r = Rect(j * segmentWidth, 0, segmentWidth - 1, origHei);
             }
-
+            
             tmpFrame(r).copyTo(frames[(i * segments) + j]);
+/*
+            Mat segment;
+            if(j == lastSegment)
+            {
+                cout << "* orig width: " << origWid << endl;
+                cout << "* last segment: " << (j * segmentWidth) << " - " << ((j * segmentWidth) + lastWidth) << endl;
+                segment = tmpFrame.colRange(j * segmentWidth, (j * segmentWidth) + lastWidth).clone();
+            }
+            else
+            {
+                cout << "* orig width: " << origWid << endl;
+                cout << "* a segment: " << (j * segmentWidth) << " - " << (((j+1) * segmentWidth) - 1) << endl;
+                segment = tmpFrame.colRange(j * segmentWidth, ((j+1) * segmentWidth) - 1 ).clone();
+            }
 
+            frames[(i + segments) + j] = segment;
+*/
             if(frames[(i * segments) + j].empty())
             {
                 cout << "Error: frame " << (i * segments) + j <<  " empty" << endl;
@@ -349,6 +368,8 @@ int main(int argc, char* argv[])
     if(quietMode == false)
         cout << "Processing " << maxFrames << " frames (" << maxSegments << " segments)" << endl;
 
+    clock_t startTime = clock();
+
     cilk_for(int i = 0; i < maxSegments; ++i)
     {
         if(!quietMode)
@@ -358,28 +379,28 @@ int main(int argc, char* argv[])
         carvedFrames[i] = ReduceFrame(frame1, seamsPerSegment, 0);
     }
 
+    clock_t endTime = clock();
+
+    Mat fullFrame;
     for(int i = 0; i < maxSegments; ++i)
     {
-        Rect r;
-        int frm = i / segments;
-        int seg = i % segments;
-        int startCol = (seg * segmentWidth) - (seg * seamsPerSegment);
-
-        if(seg == lastSegment)
+        int segNum = i % 3;
+        if( segNum == 0)  // 1st segment of frame
         {
-            r = Rect(startCol, 0, lastWidth - seamsPerSegment, origHei);
+            fullFrame.create(origWid - ver, origHei - hor, carvedFrames[i].type());
+            //fullFrame = carvedFrames[i];
+            hconcat(fullFrame, carvedFrames[i], fullFrame);
         }
         else
         {
-            r = Rect(startCol, 0, segmentWidth - seamsPerSegment - 1, origHei);
+            hconcat(fullFrame, carvedFrames[i], fullFrame);
+            //fullFrame = tmpFrame;
         }
 
-        carvedFrames[i].copyTo(outFrames[frm](r));
-    }
-
-    for(int i = 0; i < maxFrames; ++i)
-    {
-        output << outFrames[i];
+        if(segNum == 0)
+        {
+            output << fullFrame;
+        }
     }
 
     if(reportMode == true)
@@ -387,7 +408,7 @@ int main(int argc, char* argv[])
         cout << "Input file: " << inFile << "\tOutput file: " << outFile << endl;
         cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrames << endl;
         cout << "Seams carved: " << ver << "x" << hor << endl;
-        cout << "Elapsed time: " << (clock() - startTime)/CLOCKS_PER_SEC << endl;
+        cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
     }
 
     return 0;
