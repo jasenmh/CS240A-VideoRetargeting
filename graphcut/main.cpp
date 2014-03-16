@@ -20,14 +20,18 @@ int *FindSeam(Mat &GrayImage);
 Mat ReduceVer(Mat GrayImage, Mat image);
 Mat ReduceHor(Mat GrayImage, Mat image);
 
+/* Removes a seam from an image by copying all the pixels into a new image,
+ * except for ones found in the seam array.
+ * 
+ * image: the original version of the image
+ * seam: an array of integers which represent the column number of the pixel to remove from each row
+ */
 Mat RemoveSeam(Mat image, int Seam[])
 {
     int nrows = image.rows;
     int ncols = image.cols;
     Mat ReducedImage(nrows,ncols-1,CV_8UC3);
-    //ReducedGrayImage.copyTo(temp);
-    //for(int k = 0;k<3;k++)
-    //vector<Mat> channels = cv::split()
+
     for(int i=0; i<nrows; i++)
     {
         if(Seam[i] != 0)
@@ -49,6 +53,14 @@ Mat RemoveSeam(Mat image, int Seam[])
     return ReducedImage;
 }
 
+/* Performs the graph cut algorithm to find the minimum-energy seam in the image. See
+ * graph.cpp, graph.h, and maxflow.cpp for details. 
+ *  
+ * Returns an array of ints, with each index containing the column number of the pixel
+ * to remove from each row.
+ * 
+ * grayImage: the grayscale version of the image from which to find the seam
+ */
 int *FindSeam(Mat &grayImage)
 {
     typedef Graph<int,int,int> GraphType;
@@ -150,6 +162,11 @@ int *FindSeam(Mat &grayImage)
     return Seam;
 }
 
+/* Removes one vertical seam from an image 
+ * 
+ * GrayImage: the greyscale version of the image
+ * image: the normal version of the image, before reduction
+ */
 Mat ReduceVer(Mat GrayImage, Mat image)
 {
     int rows = GrayImage.rows;
@@ -159,6 +176,11 @@ Mat ReduceVer(Mat GrayImage, Mat image)
     return ReturnImage;
 }
 
+/* Removes one horizontal seam from an image 
+ * 
+ * GrayImage: the greyscale version of the image
+ * image: the normal version of the image, before reduction
+ */
 Mat ReduceHor(Mat GrayImage, Mat image)
 {
     int rows = GrayImage.rows;
@@ -168,6 +190,14 @@ Mat ReduceHor(Mat GrayImage, Mat image)
     return ReturnImage.t();
 }
 
+/* This function produces a new, retargeted image by iteratively 
+ * carving out the minimum seams.
+ *
+ * frame1: the input image
+ * frame2: empty--not used in this version of the code
+ * ver: the number of vertical seams to remove
+ * hor: the number of horizontal frames to remove
+ */
 Mat ReduceFrame(Mat frame1, Mat frame2, int ver, int hor)
 {
     Mat image = frame1;
@@ -210,6 +240,8 @@ Mat ReduceFrame(Mat frame1, Mat frame2, int ver, int hor)
     }
     else
     {
+        // For CS240 this is the only loop that will be called since we are only
+        // cutting vertical seams
         for(int i = 0; i < diffHorVer; ++i)
         {
             ReducedImage = ReduceVer(ReducedGrayImage, ReducedImage);
@@ -326,7 +358,7 @@ int main(int argc, char* argv[])
 
     clock_t startTime = clock();
 
-    //int fps = (int) cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+    // This is the main loop which computes the retargeted frames
     for(int i = 0; i < maxFrames; ++i)
     {
       if(!quietMode)
