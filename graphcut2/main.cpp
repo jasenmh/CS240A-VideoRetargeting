@@ -389,8 +389,6 @@ int main(int argc, char* argv[])
     const string outFile = inFile.substr(0, pAt) + "-temp4.mov";
     output.open(outFile, ex, cap.get(CV_CAP_PROP_FPS), S, true);
 
-    clock_t startTime = clock();
-
     Mat *frames = new Mat[maxFrames];
     Mat *outFrames = new Mat[maxFrames];
 
@@ -407,7 +405,8 @@ int main(int argc, char* argv[])
     if(quietMode == false)
         cout << "Processing " << maxFrames << " frames..." << endl;
 
-    // TODO - change timing system so we don't count I/O
+    clock_t startTime = clock();
+
     // This is the main loop which computes the retargeted frames
     for(int i = 0; i < maxFrames; ++i)
     {
@@ -425,6 +424,8 @@ int main(int argc, char* argv[])
         outFrames[i] = NewFrame;
     }
 
+    clock_t endTime = clock();
+
     for(int i = 0; i < maxFrames; ++i)
     {
         output<<outFrames[i];
@@ -435,7 +436,7 @@ int main(int argc, char* argv[])
         cout << "Input file: " << inFile << "\tOutput file: " << outFile << endl;
         cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrames << endl;
         cout << "Seams carved: " << ver << "x" << hor << endl;
-        cout << "Elapsed time: " << (clock() - startTime)/CLOCKS_PER_SEC << endl;
+        cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
     }
 
     return 0;

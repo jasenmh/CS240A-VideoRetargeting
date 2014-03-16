@@ -417,86 +417,139 @@ int main(int argc, char* argv[])
     const string outFile = inFile.substr(0, pAt) + "-temp4.mov";
     output.open(outFile, ex, cap.get(CV_CAP_PROP_FPS), S, true);
 
-    clock_t startTime = clock();
+    Mat *frames = new Mat[maxFrames];
+    Mat *outFrames = new Mat[maxFrames];
+
+    for(int i = 0; i < maxFrames; ++i)
+    {
+        cap >> frames[i];
+        if(frames[i].empty())
+        {
+            cout << "Error: unable to read frame " << i << endl;
+            return 1;
+        }
+    }
 
     if(quietMode == false)
         cout << "Processing " << maxFrames << " frames..." << endl;
 
-// TODO - refactor to read in frames into array before processing
-// TODO - change timing system so we don't count I/O
-    // This is the main loop which computes the retargeted frames
-    while (/*key != 'q' &&*/ last<3 )
-    {
-        if(first ==1 )
-        {
-            cap >> frame1;
-            if (frame1.empty())
-            {
-                printf("!!! cvQueryFrame failed: no frame\n");
-                break;
-            }
-            first = 0;
-            continue;
-        }
-        else if(second==1)
-        {
-            cap >> frame2;
-            if (frame2.empty())
-            {
-                printf("!!! cvQueryFrame failed: no frame\n");
-                break;
-            }
-            second = 0;
-            continue;
-        }
-        else if(third==1)
-        {
-            cap >> frame3;
-            if (frame3.empty())
-            {
-                printf("!!! cvQueryFrame failed: no frame\n");
-                break;
-            }
-            third = 0;
-            continue;
-        }
-        else
-        {
-            cap >> frame4;
-            if(frame4.empty())
-            {
-                /* Graph cut on frame 1 */
-                //cout<< "Last frame" << endl;
-                if(last ==0)
-                {
-                    frame4 = frame1;
-                }
-                else if(last ==1)
-                {
-                    frame3 = frame1;
-                    frame4 = frame2;
-                }
-                else if(last ==2)
-                {
-                    frame3 = frame1;
-                    frame4 = frame1;
-                    frame2 = frame1;
-                }
-                last = last+1;
-            }
-            NewFrame = ReduceFrame(frame1, frame2, frame3, frame4, ver, hor);
-            frame1 = frame2;
-            frame2 = frame3;
-            frame3 = frame4;
-        }
 
-        if(displayMode == true)
-            imshow("Frames", NewFrame);
-        // quit when user press 'q'
-        output<<NewFrame;
-        //key = cvWaitKey(1000 / 25);
+    clock_t startTime = clock();
+
+    // This is the main loop which computes the retargeted frames
+    // while (/*key != 'q' &&*/ last<3 )
+    // {
+    //     if(first ==1 )
+    //     {
+    //         cap >> frame1;
+    //         if (frame1.empty())
+    //         {
+    //             printf("!!! cvQueryFrame failed: no frame\n");
+    //             break;
+    //         }
+    //         first = 0;
+    //         continue;
+    //     }
+    //     else if(second==1)
+    //     {
+    //         cap >> frame2;
+    //         if (frame2.empty())
+    //         {
+    //             printf("!!! cvQueryFrame failed: no frame\n");
+    //             break;
+    //         }
+    //         second = 0;
+    //         continue;
+    //     }
+    //     else if(third==1)
+    //     {
+    //         cap >> frame3;
+    //         if (frame3.empty())
+    //         {
+    //             printf("!!! cvQueryFrame failed: no frame\n");
+    //             break;
+    //         }
+    //         third = 0;
+    //         continue;
+    //     }
+    //     else
+    //     {
+    //         cap >> frame4;
+    //         if(frame4.empty())
+    //         {
+    //             /* Graph cut on frame 1 */
+    //             //cout<< "Last frame" << endl;
+    //             if(last ==0)
+    //             {
+    //                 frame4 = frame1;
+    //             }
+    //             else if(last ==1)
+    //             {
+    //                 frame3 = frame1;
+    //                 frame4 = frame2;
+    //             }
+    //             else if(last ==2)
+    //             {
+    //                 frame3 = frame1;
+    //                 frame4 = frame1;
+    //                 frame2 = frame1;
+    //             }
+    //             last = last+1;
+    //         }
+    //         NewFrame = ReduceFrame(frame1, frame2, frame3, frame4, ver, hor);
+    //         frame1 = frame2;
+    //         frame2 = frame3;
+    //         frame3 = frame4;
+    //     }
+
+    //     if(displayMode == true)
+    //         imshow("Frames", NewFrame);
+    //     // quit when user press 'q'
+    //     output<<NewFrame;
+    //     //key = cvWaitKey(1000 / 25);
+    //     if(quietMode == false)
+    //         cout << "Frame " << frameCount++ << "/" << maxFrames << endl;
+    // }
+
+    for(int i = 0; i < maxFrames; ++i)
+    {
         if(quietMode == false)
             cout << "Frame " << frameCount++ << "/" << maxFrames << endl;
+
+        frame1 = frames[i];
+
+        // check if we are close to the end of the video and
+        // select frames appropriately
+        if(i < maxFrames - 3) {
+            frame2 = frames[i+1];
+            frame3 = frames[i+2];
+            frame4 = frames[i+3];
+        }
+        else if(i < maxFrames - 2) {
+            frame2 = frames[i+1];
+            frame3 = frames[i+2];
+            frame4 = frame3;
+        } 
+        else if(i < maxFrames - 1) {
+            frame2 = frames[i+1];
+            frame3 = frame2;
+            frame4 = frame2;
+        } else {
+            frame2 = frame1;
+            frame3 = frame1;
+            frame4 = frame1;
+        }
+
+        NewFrame = ReduceFrame(frame1, frame2, frame3, frame4, ver, hor);
+
+        outFrames[i] = NewFrame;
+    }
+
+    clock_t endTime = clock();
+
+    for(int i = 0; i < maxFrames; ++i)
+    {
+        output<<outFrames[i];
     }
 
     if(reportMode == true)
@@ -504,7 +557,7 @@ int main(int argc, char* argv[])
         cout << "Input file: " << inFile << "\tOutput file: " << outFile << endl;
         cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrames << endl;
         cout << "Seams carved: " << ver << "x" << hor << endl;
-        cout << "Elapsed time: " << (clock() - startTime)/CLOCKS_PER_SEC << endl;
+        cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
     }
 
     return 0;
