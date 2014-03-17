@@ -264,7 +264,7 @@ int main(int argc, char* argv[])
     VideoCapture cap;
     VideoWriter output;
     string inFile = "earth_4_orig.mov";
-    Mat frame1, frame2, NewFrame;
+    
     int ver = 2;
     int hor = 2;
     int frameCount = 1;
@@ -333,7 +333,7 @@ int main(int argc, char* argv[])
     //char key = 0;
     int first = 1;
     int last = 0;
-    NewFrame = Mat::zeros(S, CV_32F);
+
     string::size_type pAt = inFile.find_last_of('.');   // Find extension point
     const string outFile = inFile.substr(0, pAt) + "-basic.mov";
     output.open(outFile, ex, cap.get(CV_CAP_PROP_FPS), S, true);
@@ -361,6 +361,8 @@ int main(int argc, char* argv[])
     // This is the main loop which computes the retargeted frames
     cilk_for(int i = 0; i < maxFrames; ++i)
     {
+        Mat frame1;
+
         if(!quietMode)
             cout << "Frame " << frameCount++ << "/" << maxFrames << endl;
 
