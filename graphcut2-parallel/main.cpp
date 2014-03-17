@@ -408,7 +408,7 @@ int main(int argc, char* argv[])
     clock_t startTime = clock();
 
     // This is the main loop which computes the retargeted frames
-    for(int i = 0; i < maxFrames; ++i)
+    cilk_for(int i = 0; i < maxFrames; ++i)
     {
         if(quietMode == false)
             cout << "Frame " << frameCount++ << "/" << maxFrames << endl;
