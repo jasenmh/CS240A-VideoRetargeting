@@ -10,6 +10,8 @@
 #include <string>
 #include <opencv/cv.h>
 #include <opencv2/highgui/highgui.hpp>
+#include <sys/time.h>
+#include <cilk/cilk_api.h>
 
 using namespace std;
 using namespace cv;
@@ -355,6 +357,8 @@ int main(int argc, char* argv[])
     bool quietMode = false;
     bool reportMode = false;
     bool displayMode = false;
+    char *numWorkers = NULL;
+    struct timeval startTime, endTime;
 
     if(argc > 1)
     {
@@ -371,6 +375,10 @@ int main(int argc, char* argv[])
             else if(strcmp(argv[i], "-v") == 0)
             {
                 ver = atoi(argv[++i]);
+            }
+            else if(strcmp(argv[i], "-w") == 0)
+            {
+                numWorkers = argv[++i];
             }
             else if(strcmp(argv[i], "-q") == 0)
             {
@@ -395,6 +403,15 @@ int main(int argc, char* argv[])
     {
         printUsage();
         return -1;
+    }
+
+    if(numWorkers == NULL)
+        numWorkers = (char *)"2";
+
+    if (0!= __cilkrts_set_param("nworkers", numWorkers))
+    {
+        printf("Failed to set worker count\n");
+        return 1;
     }
 
     cap.open(inFile);
@@ -434,7 +451,8 @@ int main(int argc, char* argv[])
         cout << "Processing " << maxFrames << " frames..." << endl;
 
 
-    clock_t startTime = clock();
+    //clock_t startTime = clock();
+    gettimeofday(&startTime, NULL);
 
     // This is the main loop which computes the retargeted frames
     // while (/*key != 'q' &&*/ last<3 )
@@ -545,7 +563,8 @@ int main(int argc, char* argv[])
         outFrames[i] = ReduceFrame(frame1, frame2, frame3, frame4, ver, hor);
     }
 
-    clock_t endTime = clock();
+    //clock_t endTime = clock();
+    gettimeofday(&endTime, NULL);
 
     for(int i = 0; i < maxFrames; ++i)
     {
@@ -557,7 +576,9 @@ int main(int argc, char* argv[])
         cout << "Input file: " << inFile << "\tOutput file: " << outFile << endl;
         cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrames << endl;
         cout << "Seams carved: " << ver << "x" << hor << endl;
-        cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
+        //cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
+        cout << "Elapsed time: " << (endTime.tv_sec*1000000 + (endTime.tv_usec)) - 
+            (startTime.tv_sec*1000000 + (startTime.tv_usec)) << endl;
     }
 
     return 0;

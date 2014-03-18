@@ -11,6 +11,8 @@
 #include <cstring>
 #include <opencv/cv.h>
 #include <opencv2/highgui/highgui.hpp>
+#include <sys/time.h>
+#include <cilk/cilk_api.h>
 
 using namespace std;
 using namespace cv;
@@ -271,6 +273,8 @@ int main(int argc, char* argv[])
     bool reportMode = false;
     bool displayMode = false;
     int segments = 2;
+    char *numWorkers = NULL;
+    struct timeval startTime, endTime;
 
     if(argc > 1)
     {
@@ -287,6 +291,10 @@ int main(int argc, char* argv[])
             else if(strcmp(argv[i], "-h") == 0)
             {
                 hor = atoi(argv[++i]);
+            }
+            else if(strcmp(argv[i], "-w") == 0)
+            {
+                numWorkers = argv[++i];
             }
             else if(strcmp(argv[i], "-s") == 0)
             {
@@ -315,6 +323,15 @@ int main(int argc, char* argv[])
     {
         printUsage();
         return -1;
+    }
+
+    if(numWorkers == NULL)
+        numWorkers = (char *)"2";
+
+    if (0!= __cilkrts_set_param("nworkers", numWorkers))
+    {
+        printf("Failed to set worker count\n");
+        return 1;
     }
 
     cap.open(inFile);
@@ -399,7 +416,8 @@ int main(int argc, char* argv[])
     if(quietMode == false)
         cout << "Processing " << maxFrames << " frames (" << maxSegments << " segments)" << endl;
 
-    clock_t startTime = clock();
+    //clock_t startTime = clock();
+    gettimeofday(&startTime, NULL);
 
     // This is the main loop which computes the retargeted frames
     cilk_for(int i = 0; i < maxSegments; ++i)
@@ -411,36 +429,48 @@ int main(int argc, char* argv[])
         carvedFrames[i] = ReduceFrame(frame1, seamsPerSegment, 0);
     }
 
-    clock_t endTime = clock();
-
+    //clock_t endTime = clock();
+    gettimeofday(&endTime, NULL);
+/* This doesn't work, fix later and run analaysis now
     Mat fullFrame;
     for(int i = 0; i < maxSegments; ++i)
     {
-        int segNum = i % 3;
+        int segNum = i % segments;
+        Rect r;
+
         if( segNum == 0)  // 1st segment of frame
         {
             fullFrame.create(origWid - ver, origHei - hor, carvedFrames[i].type());
-            //fullFrame = carvedFrames[i];
-            hconcat(fullFrame, carvedFrames[i], fullFrame);
+            //hconcat(fullFrame, carvedFrames[i], fullFrame);
+            r = Rect(0, 0, segmentWidth - seamsPerSegment - 1, origHei); 
+        }
+        else if (segNum == lastSegment)
+        {
+            r = Rect((i * segmentWidth) - (i * seamsPerSegment), 0, lastWidth - seamsPerSegment, origHei);
         }
         else
         {
-            hconcat(fullFrame, carvedFrames[i], fullFrame);
-            //fullFrame = tmpFrame;
+            //hconcat(fullFrame, carvedFrames[i], fullFrame);
+            r = Rect((i * segmentWidth) - (i * seamsPerSegment), 0, segmentWidth - seamsPerSegment - 1, origHei); 
         }
 
-        if(segNum == 0)
+        carvedFrames[i].copyTo(fullFrame(r));
+
+        if(segNum == lastSegment)
         {
             output << fullFrame;
         }
     }
-
+*/
     if(reportMode == true)
     {
         cout << "Input file: " << inFile << "\tOutput file: " << outFile << endl;
         cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrames << endl;
         cout << "Seams carved: " << ver << "x" << hor << endl;
-        cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
+        //cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
+        cout << "Elapsed time: " << (endTime.tv_sec*1000000 + (endTime.tv_usec)) - 
+            (startTime.tv_sec*1000000 + (startTime.tv_usec)) << endl;
+
     }
 
     return 0;

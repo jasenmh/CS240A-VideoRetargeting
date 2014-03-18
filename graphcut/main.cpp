@@ -11,6 +11,7 @@
 #include <cstring>
 #include <opencv/cv.h>
 #include <opencv2/highgui/highgui.hpp>
+#include <sys/time.h>
 
 using namespace std;
 using namespace cv;
@@ -271,6 +272,7 @@ int main(int argc, char* argv[])
     bool quietMode = false;
     bool reportMode = false;
     bool displayMode = false;
+    struct timeval startTime, endTime;
 
     if(argc > 1)
     {
@@ -356,7 +358,8 @@ int main(int argc, char* argv[])
     if(quietMode == false)
         cout << "Processing " << maxFrames << " frames..." << endl;
 
-    clock_t startTime = clock();
+    //clock_t startTime = clock();
+    gettimeofday(&startTime, NULL);
 
     // This is the main loop which computes the retargeted frames
     for(int i = 0; i < maxFrames; ++i)
@@ -368,7 +371,8 @@ int main(int argc, char* argv[])
       outFrames[i] = ReduceFrame(frame1, empty, ver, hor);
     }
 
-    clock_t endTime = clock();
+    //clock_t endTime = clock();
+    gettimeofday(&endTime, NULL);
 
     for(int i = 0; i < maxFrames; ++i)
     {
@@ -380,7 +384,9 @@ int main(int argc, char* argv[])
         cout << "Input file: " << inFile << "\tOutput file: " << outFile << endl;
         cout << "Dimension: " << origWid << "x" << origHei << "\tFrames: " << maxFrames << endl;
         cout << "Seams carved: " << ver << "x" << hor << endl;
-        cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
+        //cout << "Elapsed time: " << (endTime - startTime)/CLOCKS_PER_SEC << endl;
+        cout << "Elapsed time: " << (endTime.tv_sec*1000000 + (endTime.tv_usec)) - 
+            (startTime.tv_sec*1000000 + (startTime.tv_usec)) << endl;
     }
 
     return 0;
