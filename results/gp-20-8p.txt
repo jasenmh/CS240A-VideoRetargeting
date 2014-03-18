@@ -1,0 +1,71 @@
+Using 8 workers.
+Reading in frames
+Processing 64 frames...
+Frame 1/64
+Frame Frame 2Frame /Frame 5/64
+Frame 646/64
+Frame 7/64Frame 
+48/64/
+64
+3
+/64
+Frame 9/64
+Frame 10/64
+Frame 11/64
+Frame 12/64
+Frame 13/64
+Frame 14/64
+Frame 15/64
+Frame 16/64
+Frame 17/64
+Frame 18/64
+Frame 19/64
+Frame 20/64
+Frame 21/64
+Frame 22/64
+Frame 23/64
+Frame 24/64
+Frame 25/64
+Frame 26/64
+Frame 27/64
+Frame 28/64
+Frame 29/64
+Frame 30/64
+Frame 31/64
+Frame 32/64
+Frame 33/64
+Frame 34/64
+Frame 35/64
+Frame 36/64
+Frame 37/64
+Frame 38/64
+Frame 39/64
+Frame 40/64
+Frame 41/64
+Frame 42/64
+Frame 43/64
+Frame 44/64
+Frame 45/64
+Frame 46/64
+Frame 47/64
+Frame 48/64
+Frame 49/64
+Frame 50/64
+Frame 51/64
+Frame 52/64
+Frame 53/64
+Frame 54/64
+Frame 55/64
+Frame 56/64
+Frame 57/64
+Frame 58/64
+Frame 59/64
+Frame 60/64
+Frame 61/64
+Frame 62/64
+Frame 63/64
+Frame 64/64
+Input file: graphcut-parallel/ratatouille1.mov	Output file: graphcut-parallel/ratatouille1-basic.mov
+Dimension: 640x256	Frames: 64
+Seams carved: 20x0
+Elapsed time: 1298875312
