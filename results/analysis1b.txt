@@ -1,0 +1,9 @@
+graphcut/GraphCut -f ratatouille1-30.mov -v 8 -h 0 -r
+workers: 1 segments: 1 seams: 8
+	time: 931245170
+graphcut/GraphCut -f ratatouille1-30.mov -v 16 -h 0 -r
+workers: 1 segments: 1 seams: 16
+	time: 2252713551
+graphcut/GraphCut -f ratatouille1-30.mov -v 32 -h 0 -r
+workers: 1 segments: 1 seams: 32
+	time: 5449132907

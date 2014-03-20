@@ -1,0 +1,61 @@
+graphcut-parallel/GraphCut
+workers: 2 segments: 1 seams: 5
+	time: 283320536
+workers: 2 segments: 1 seams: 20
+	time: 1652743295
+workers: 2 segments: 1 seams: 30
+	time: 2750161278
+graphcut-segment/GraphCut
+workers: 2 segments: 2 seams: 5
+	time: 36713452
+workers: 2 segments: 2 seams: 20
+	time: 253186904
+workers: 2 segments: 2 seams: 30
+	time: 424849301
+workers: 2 segments: 4 seams: 5
+	time: 10056511
+workers: 2 segments: 4 seams: 20
+	time: 64765578
+workers: 2 segments: 4 seams: 30
+	time: 98786018
+workers: 2 segments: 8 seams: 5
+	time: 8581
+workers: 2 segments: 8 seams: 20
+	time: 14804209
+workers: 2 segments: 8 seams: 30
+	time: 23217964
+graphcut/GraphCut
+workers: 1 segments: 1 seams: 5
+	time: 505835272
+workers: 1 segments: 1 seams: 20
+	time: 3000538112
+workers: 1 segments: 1 seams: 30
+	time: 5045411260
+graphcut2-parallel/GraphCut
+workers: 2 segments: 1 seams: 5
+	time: 244327592
+workers: 2 segments: 1 seams: 20
+	time: 1426904004
+workers: 2 segments: 1 seams: 30
+	time: 2367406074
+graphcut2/GraphCut
+workers: 1 segments: 1 seams: 5
+	time: 430195588
+workers: 1 segments: 1 seams: 20
+	time: 2660156903
+workers: 1 segments: 1 seams: 30
+	time: 4472441609
+graphcut4-parallel/GraphCut
+workers: 2 segments: 1 seams: 5
+	time: 210755058
+workers: 2 segments: 1 seams: 20
+	time: 1224842244
+workers: 2 segments: 1 seams: 30
+	time: 2051709357
+graphcut4/GraphCut
+workers: 1 segments: 1 seams: 5
+	time: 391138454
+workers: 1 segments: 1 seams: 20
+	time: 2190842115
+workers: 1 segments: 1 seams: 30
+	time: 3756665717

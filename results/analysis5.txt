@@ -1,0 +1,27 @@
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 8 -h 0 -r -s 2 -w 4
+workers: 4 segments: 2 seams: 8
+	time: 48515153
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 16 -h 0 -r -s 2 -w 4
+workers: 4 segments: 2 seams: 16
+	time: 114341653
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 32 -h 0 -r -s 2 -w 4
+workers: 4 segments: 2 seams: 32
+	time: 281081930
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 8 -h 0 -r -s 4 -w 4
+workers: 4 segments: 4 seams: 8
+	time: 13274529
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 16 -h 0 -r -s 4 -w 4
+workers: 4 segments: 4 seams: 16
+	time: 29844748
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 32 -h 0 -r -s 4 -w 4
+workers: 4 segments: 4 seams: 32
+	time: 67352313
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 8 -h 0 -r -s 8 -w 4
+workers: 4 segments: 8 seams: 8
+	time: 4033722
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 16 -h 0 -r -s 8 -w 4
+workers: 4 segments: 8 seams: 16
+	time: 8609444
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 32 -h 0 -r -s 8 -w 4
+workers: 4 segments: 8 seams: 32
+	time: 18733939

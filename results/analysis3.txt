@@ -1,0 +1,54 @@
+graphcut-parallel/GraphCut -f ratatouille1-30.mov -v 5 -h 0 -r -w 8
+workers: 8 segments: 1 seams: 5
+	time: 122039838
+graphcut-parallel/GraphCut -f ratatouille1-30.mov -v 20 -h 0 -r -w 8
+workers: 8 segments: 1 seams: 20
+	time: 703792087
+graphcut-parallel/GraphCut -f ratatouille1-30.mov -v 30 -h 0 -r -w 8
+workers: 8 segments: 1 seams: 30
+	time: 1380225200
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 5 -h 0 -r -s 2 -w 8
+workers: 8 segments: 2 seams: 5
+	time: 19234053
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 20 -h 0 -r -s 2 -w 8
+workers: 8 segments: 2 seams: 20
+	time: 137582844
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 30 -h 0 -r -s 2 -w 8
+workers: 8 segments: 2 seams: 30
+	time: 223289493
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 5 -h 0 -r -s 4 -w 8
+workers: 8 segments: 4 seams: 5
+	time: 5510601
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 20 -h 0 -r -s 4 -w 8
+workers: 8 segments: 4 seams: 20
+	time: 34962965
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 30 -h 0 -r -s 4 -w 8
+workers: 8 segments: 4 seams: 30
+	time: 52383316
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 5 -h 0 -r -s 8 -w 8
+workers: 8 segments: 8 seams: 5
+	time: 9393
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 20 -h 0 -r -s 8 -w 8
+workers: 8 segments: 8 seams: 20
+	time: 8348055
+graphcut-segment/GraphCut -f ratatouille1-30.mov -v 30 -h 0 -r -s 8 -w 8
+workers: 8 segments: 8 seams: 30
+	time: 13060628
+graphcut2-parallel/GraphCut -f ratatouille1-30.mov -v 5 -h 0 -r -w 8
+workers: 8 segments: 1 seams: 5
+	time: 125454103
+graphcut2-parallel/GraphCut -f ratatouille1-30.mov -v 20 -h 0 -r -w 8
+workers: 8 segments: 1 seams: 20
+	time: 710211301
+graphcut2-parallel/GraphCut -f ratatouille1-30.mov -v 30 -h 0 -r -w 8
+workers: 8 segments: 1 seams: 30
+	time: 1214808169
+graphcut4-parallel/GraphCut -f ratatouille1-30.mov -v 5 -h 0 -r -w 8
+workers: 8 segments: 1 seams: 5
+	time: 111103640
+graphcut4-parallel/GraphCut -f ratatouille1-30.mov -v 20 -h 0 -r -w 8
+workers: 8 segments: 1 seams: 20
+	time: 610478326
+graphcut4-parallel/GraphCut -f ratatouille1-30.mov -v 30 -h 0 -r -w 8
+workers: 8 segments: 1 seams: 30
+	time: 1090957474
