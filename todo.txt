@@ -3,3 +3,6 @@ Instrument FindSeam() and RemoveSeam() calls to find where time is being spent
 Solve problem merging segmented frames back together
 
 Create segmented forward energy version
+
+Don't force seams in high-info segments. need extra step to look at energy of
+potential seams and carve appropriately
