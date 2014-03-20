@@ -1,0 +1,5 @@
+Instrument FindSeam() and RemoveSeam() calls to find where time is being spent
+
+Solve problem merging segmented frames back together
+
+Create segmented forward energy version
