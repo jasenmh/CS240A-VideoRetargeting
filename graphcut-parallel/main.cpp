@@ -329,6 +329,10 @@ int main(int argc, char* argv[])
         printf("Failed to set worker count\n");
         return 1;
     }
+    else
+    {
+        cout << "Using " << numWorkers << " workers." << endl;
+    }
 
     cap.open(inFile);
     int maxFrames= cap.get(CV_CAP_PROP_FRAME_COUNT);
