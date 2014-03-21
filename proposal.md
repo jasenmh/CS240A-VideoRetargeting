@@ -6,6 +6,9 @@ Kyle Jorgensen
 
 11 Feb 2014
 
+* [Progress Report Presentation](https://www.dropbox.com/s/q1dnkiweyk34ri6/project-progress.pdf)
+* [Final Project Report](https://www.dropbox.com/s/cn01oqwfiazb510/CS240FinalProjectReport.pdf)
+
 ## Background
 
 We will be parallelizing a seam-carving video retargeting program developed as a project for Matthew Turk's Spring 2013
